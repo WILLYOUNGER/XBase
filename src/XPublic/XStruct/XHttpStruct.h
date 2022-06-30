@@ -174,9 +174,9 @@ private:
 	bool m_b_isNeedClose { true };
 
 	std::string m_head;
-public:
-	static std::map<XSocket, std::list<XResponse>*> m_reply;
 };
+
+//static std::map<XSocket, std::list<XResponse>*> m_reply;
 }
 
 #endif
