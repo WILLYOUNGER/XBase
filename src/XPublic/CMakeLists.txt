@@ -79,3 +79,8 @@ target_include_directories(publib
     PUBLIC 
         ${CMAKE_CURRENT_LIST_DIR}/XTools/XUtils
 )
+
+target_include_directories(publib
+    PUBLIC 
+        ${CMAKE_CURRENT_LIST_DIR}/XTools/XServer
+)

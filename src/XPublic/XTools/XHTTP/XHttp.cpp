@@ -5,6 +5,7 @@
 #include "XServletDefine.h"
 #include "XUtils.h"
 #include "XLog.h"
+#include "XServerBase.h"
 
 #include <sys/epoll.h>
 #include <sys/stat.h>
@@ -37,7 +38,7 @@ void XHttp::init()
 
 void XHttp::process(XMsgPtr &msg)
 {
-	XLOG_INFO("%s", msg->getContent().c_str());
+	//XLOG_INFO("%s", msg->getContent().c_str());
 	m_msg = msg;
 	m_read_now = 0;
 	m_line_begin = 0;
@@ -306,7 +307,7 @@ bool XHttp::path2servlet(string path)
 bool XHttp::xml2map()
 {
 	string appPath(getcwd(NULL, 0));
-    string seperator = "/../src/XPublic/XFrames/XResourse/xml/web.xml";
+    string seperator = "/web.xml";
     string fullPath = appPath + seperator;
     //cout << fullPath << endl;
     //创建一个XML的文档对象。
@@ -345,15 +346,15 @@ void XHttp::sendResponse()
 
 	//string response = string(_httpStr) + string(m_response.getFileAddress());
 
-	if (XResponse::m_reply.count(m_msg->getSocket()) == 0)
+	if (XServerBase::m_reply.count(m_msg->getSocket()) == 0)
 	{
 		list<XResponse> *replyList = new list<XResponse>();
 		replyList->push_back(m_response);
-		XResponse::m_reply[m_msg->getSocket()] = replyList;
+		XServerBase::m_reply[m_msg->getSocket()] = replyList;
 	}
 	else
 	{
-		XResponse::m_reply[m_msg->getSocket()]->push_back(m_response);
+		XServerBase::m_reply[m_msg->getSocket()]->push_back(m_response);
 	}
 	UTILS->modfd(m_msg->getEpollfd(), m_msg->getSocket(), EPOLLOUT, 0);
 }
@@ -415,7 +416,7 @@ void XHttp::dealresponse(std::string &str)
 void XHttp::do_request(string str)
 {
 	string appPath(getcwd(NULL, 0));
-    string seperator = "/../src/XRoot";
+    string seperator = "/root";
     string fullPath = appPath + seperator + str;
     struct stat _file_stat;
 	int _type = 0;

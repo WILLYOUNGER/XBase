@@ -12,29 +12,21 @@ using namespace XNETBASE;
 using namespace XNETSTRUCT;
 using namespace XUTILS;
 
-XWebServer::XWebServer()
+XWebServer::XWebServer(std::string ip, int port)
+{
+    init(ip, port);
+}
+
+void XWebServer::init(string ip, int port)
 {
     pool = new XPthreadPool<XMsgPtr, XHttp>(8, 10000);
 
-	m_web_server = new XServer("0.0.0.0", 23333);
-	auto connCb = bind(&XWebServer::ConnectCallback,this,std::placeholders::_1);
-    m_web_server->setConnectionCallback(connCb);
-
-    auto closeCb = bind(&XWebServer::CloseCallback, this);
-    m_web_server->setCloseCallback(closeCb);
-
-    auto readCb = bind(&XWebServer::ReadCallback,this,std::placeholders::_1);
-    m_web_server->setReadCallback(readCb);
-
-    auto writeCb = bind(&XWebServer::WriteCallback, this, std::placeholders::_1, std::placeholders::_2);
-    m_web_server->setWriteCallback(writeCb);
-
-    m_web_server->beginListen();
+    XServerBase::init(ip, port);
 }
 
 void XWebServer::ConnectCallback(XSocket socket)
 {
-    XLOG_DEBUG("a client connected.connfd: ", to_string(socket).c_str());
+    //XLOG_DEBUG("a client connected.connfd: ", to_string(socket).c_str());
 }
 
 void XWebServer::CloseCallback(void)
@@ -48,14 +40,14 @@ void XWebServer::ReadCallback(XMsgPtr msg)
 
 bool XWebServer::WriteCallback(XSocket epollfd, XSocket socket)
 {
-    if (XResponse::m_reply.count(socket) == 0)
+    if (XWebServer::m_reply.count(socket) == 0)
     {
         UTILS->modfd(epollfd, socket, EPOLLIN, 0);
         return true;
     }
     else
     {
-        auto temp = XResponse::m_reply[socket]->front();
+        auto temp = m_reply[socket]->front();
 
         if (temp.isEmpty() == false)
         {
@@ -85,8 +77,8 @@ bool XWebServer::WriteCallback(XSocket epollfd, XSocket socket)
             {
 
             }
-
-            XResponse::m_reply[socket]->pop_front();
+            XLOG_INFO("%s", _head);
+            XWebServer::m_reply[socket]->pop_front();
             UTILS->modfd(epollfd, socket, EPOLLIN, 0);
 
             return temp.getNeedClose();
