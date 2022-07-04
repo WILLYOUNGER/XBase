@@ -1,5 +1,5 @@
-#ifndef X_STRUCT_H
-#define X_STRUCT_H
+#ifndef X_PUBLIC_STRUCT_NETSTRUCT_H
+#define X_PUBLIC_STRUCT_NETSTRUCT_H
 
 #include <string>
 #include <memory>
@@ -98,4 +98,4 @@ private:
 
 
 
-#endif
+#endif /* X_PUBLIC_STRUCT_NETSTRUCT_H */

@@ -1,10 +1,31 @@
-#ifndef X_WEB_SERVER_H
-#define X_WEB_SERVER_H
+/**
+*  @file XWebServer.h
+*  @brief    Web服务器
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.1.0
+*  @date     2022/6/30
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/5/4 | 1.0.0.0  | wangxinxiao      | Create file
+*  2022/6/30 | 1.0.1.0  | wangxinxiao      | 改为继承服务器基类 XServerBase
+*-
+*/
+
+#ifndef X_TEST_WEBSERVER_H
+#define X_TEST_WEBSERVER_H
 
 #include "XServerBase.h"
 #include "XPthreadPool.h"
 #include "XHttp.h"
 
+/**
+ * @brief Web服务器类
+ * 
+ */
 class XWebServer : public XServerBase
 {
 public:
@@ -23,4 +44,4 @@ private:
 	XPthreadPool<XNETSTRUCT::XMsgPtr, XHttp>* pool;
 };
 
-#endif
+#endif /* X_TEST_WEBSERVER_H */

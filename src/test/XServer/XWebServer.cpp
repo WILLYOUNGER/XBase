@@ -10,7 +10,7 @@
 using namespace std;
 using namespace XNETBASE;
 using namespace XNETSTRUCT;
-using namespace XUTILS;
+using namespace XUTILSTOOL;
 
 XWebServer::XWebServer(std::string ip, int port)
 {
@@ -42,7 +42,7 @@ bool XWebServer::WriteCallback(XSocket epollfd, XSocket socket)
 {
     if (XWebServer::m_reply.count(socket) == 0)
     {
-        UTILS->modfd(epollfd, socket, EPOLLIN, 0);
+        NETUTILS->modfd(epollfd, socket, EPOLLIN, 0);
         return true;
     }
     else
@@ -70,7 +70,7 @@ bool XWebServer::WriteCallback(XSocket epollfd, XSocket socket)
             {
                 if (errno == EAGAIN)
                 {
-                    UTILS->modfd(epollfd, socket, EPOLLOUT, 0);
+                    NETUTILS->modfd(epollfd, socket, EPOLLOUT, 0);
                 }
             }
             else
@@ -79,7 +79,7 @@ bool XWebServer::WriteCallback(XSocket epollfd, XSocket socket)
             }
             XLOG_INFO("%s", _head);
             XWebServer::m_reply[socket]->pop_front();
-            UTILS->modfd(epollfd, socket, EPOLLIN, 0);
+            NETUTILS->modfd(epollfd, socket, EPOLLIN, 0);
 
             return temp.getNeedClose();
         }

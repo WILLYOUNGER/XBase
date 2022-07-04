@@ -1,4 +1,4 @@
-#include "XStruct.h"
+#include "XNetStruct.h"
 using namespace XNETSTRUCT;
 
 

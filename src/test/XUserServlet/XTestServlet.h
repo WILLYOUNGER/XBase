@@ -1,9 +1,29 @@
-#ifndef X_TEST_SERVLET_H
-#define X_TEST_SERVLET_H
+/**
+*  @file XTestServlet.h
+*  @brief    测试servlet类
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.0.0
+*  @date     2022/5/4
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/5/4 | 1.0.0.0  | wangxinxiao      | Create file
+*-
+*/
+
+#ifndef X_TEST_USERSERVLET_H
+#define X_TEST_USERSERVLET_H
 
 #include "XServlet.h"
 #include "XServletDefine.h"
 
+/**
+ * @brief 测试servlet类
+ * 
+ */
 class XTestServlet : public XServlet
 {
 public:
@@ -17,4 +37,4 @@ public:
 
 REGISETRSERVLET(XTestServlet)
 
-#endif
+#endif /* X_TEST_USERSERVLET_H */

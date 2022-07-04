@@ -1,13 +1,33 @@
-#ifndef XLOCK_H
-#define XLOCK_H
+/**
+*  @file XLock.h
+*  @brief    各种锁（三种）
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.0.0
+*  @date     2022/5/2
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/7/2 | 1.0.0.0  | wangxinxiao      | Create file
+*-
+*/
+
+#ifndef X_PUBLIC_TOOLS_UTILS_LOCK_H
+#define X_PUBLIC_TOOLS_UTILS_LOCK_H
 
 #include <pthread.h>
 #include <semaphore.h>
 
-class sem
+/**
+ * @brief 信号量锁
+ * 
+ */
+class Sem
 {
 public:
-	sem()
+	Sem()
 	{
 		if (sem_init(&m_sem, 0, 0) != 0)
 		{
@@ -15,7 +35,7 @@ public:
 		}
 	}
 
-	~sem()
+	~Sem()
 	{
 		sem_destroy(&m_sem);
 	}
@@ -33,10 +53,14 @@ private:
 	sem_t m_sem;
 };
 
-class locker
+/**
+ * @brief 互斥锁
+ * 
+ */
+class Locker
 {
 public:
-	locker()
+	Locker()
 	{
 		if (pthread_mutex_init(&m_mutex, NULL) != 0)
 		{
@@ -44,7 +68,7 @@ public:
 		}
 	}
 
-	~locker()
+	~Locker()
 	{
 		pthread_mutex_destroy(&m_mutex);
 	}
@@ -67,10 +91,14 @@ private:
 	pthread_mutex_t m_mutex;
 };
 
-class cond
+/**
+ * @brief 条件锁
+ * 
+ */
+class Cond
 {
 public:
-	cond()
+	Cond()
 	{
 		if (pthread_cond_init(&m_cond, NULL) != 0)
 		{
@@ -78,7 +106,7 @@ public:
 		}
 	}
 
-	~cond()
+	~Cond()
 	{
 		pthread_cond_destroy(&m_cond);
 	}
@@ -110,4 +138,4 @@ private:
 	pthread_cond_t m_cond;
 };
 
-#endif
+#endif /* X_PUBLIC_TOOLS_UTILS_LOCK_H */

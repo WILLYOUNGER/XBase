@@ -18,7 +18,7 @@
 
 using namespace std;
 using namespace XNETSTRUCT;
-using namespace XUTILS;
+using namespace XUTILSTOOL;
 
 XHttp::XHttp()
 {
@@ -356,7 +356,7 @@ void XHttp::sendResponse()
 	{
 		XServerBase::m_reply[m_msg->getSocket()]->push_back(m_response);
 	}
-	UTILS->modfd(m_msg->getEpollfd(), m_msg->getSocket(), EPOLLOUT, 0);
+	NETUTILS->modfd(m_msg->getEpollfd(), m_msg->getSocket(), EPOLLOUT, 0);
 }
 
 void XHttp::dealresponse(std::string &str)

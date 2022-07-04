@@ -1,5 +1,22 @@
-#ifndef X_BLOCK_QUEUE_H
-#define X_BLOCK_QUEUE_H
+/**
+*  @file XBlockQueue.h
+*  @brief    阻塞队列
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.0.0
+*  @date     2022/5/2
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/7/2 | 1.0.0.0  | wangxinxiao      | Create file
+*-
+*/
+
+#ifndef X_PUBLIC_TOOLS_UTILS_BLOCKQUEUE_H
+
+#define X_PUBLIC_TOOLS_UTILS_BLOCKQUEUE_H
 
 #include "XLock.h"
 #include <sys/time.h>
@@ -8,113 +25,113 @@ template <typename T>
 class XBlockQueue
 {
 public:
-	XBlockQueue(int max_size) : m_max_size(max_size)
+	XBlockQueue(int maxSize) : m_i_maxSize(maxSize)
 	{
-		m_array = new T[m_max_size];
-		m_size = 0;
+		m_array = new T[m_i_maxSize];
+		m_i_size = 0;
 	}
 
 	~XBlockQueue()
 	{
-		m_mutex.lock();
+		m_locker_mutex.lock();
 		if (m_array != NULL)
 		{
 			delete[] m_array;
 		}
-		m_mutex.unlock();
+		m_locker_mutex.unlock();
 	}
 
 	void clear()
 	{
-		m_mutex.lock();
-		m_size = 0;
-		m_front = -1;
-		m_back = -1;
-		m_mutex.unlock();
+		m_locker_mutex.lock();
+		m_i_size = 0;
+		m_i_front = -1;
+		m_i_back = -1;
+		m_locker_mutex.unlock();
 	}
 
 	bool full()
 	{
-		m_mutex.lock();
-		if (m_size >= m_max_size)
+		m_locker_mutex.lock();
+		if (m_i_size >= m_i_maxSize)
 		{
-			m_mutex.unlock();
+			m_locker_mutex.unlock();
 			return true;
 		}
-		m_mutex.unlock();
+		m_locker_mutex.unlock();
 		return false;
 	}
 
 	bool empty()
 	{
-		m_mutex.lock();
-		if (m_size == 0)
+		m_locker_mutex.lock();
+		if (m_i_size == 0)
 		{
-			m_mutex.unlock();
+			m_locker_mutex.unlock();
 			return true;
 		}
-		m_mutex.unlock();
+		m_locker_mutex.unlock();
 		return false;
 	}
 
 	bool front(T &value)
 	{
-		m_mutex.lock();
-		if (0 == m_size)
+		m_locker_mutex.lock();
+		if (0 == m_i_size)
 		{
-			m_mutex.unlock();
+			m_locker_mutex.unlock();
 			return false;
 		}
-		value = m_array[m_front];
-		m_mutex.unlock();
+		value = m_array[m_i_front];
+		m_locker_mutex.unlock();
 		return true;
 	}
 
 	int size()
 	{
-		int temp = 0;
-		m_mutex.lock();
-		temp = m_size;
-		m_mutex.unlock();
-		return temp;
+		int _i_temp = 0;
+		m_locker_mutex.lock();
+		_i_temp = m_i_size;
+		m_locker_mutex.unlock();
+		return _i_temp;
 	}
 
 	int max_size()
 	{
-		return m_max_size;
+		return m_i_maxSize;
 	}
 
 	bool push(const T &item)
 	{
-		m_mutex.lock();
-		if (m_size >= m_max_size)
+		m_locker_mutex.lock();
+		if (m_i_size >= m_i_maxSize)
 		{
-			m_mutex.unlock();
+			m_locker_mutex.unlock();
 			return false;
 		}
-		m_back = (m_back + 1) % m_max_size;
-		m_array[m_back] = item;
-		m_size++;
-		m_cond.broadcast();
-		m_mutex.unlock();
+		m_i_back = (m_i_back + 1) % m_i_maxSize;
+		m_array[m_i_back] = item;
+		m_i_size++;
+		m_cond_cond.broadcast();
+		m_locker_mutex.unlock();
 		return true;
 	}
 
 	bool pop(T &item)
 	{
-		m_mutex.lock();
-		while (m_size <= 0)
+		m_locker_mutex.lock();
+		while (m_i_size <= 0)
 		{
-			if (!m_cond.wait(m_mutex.get()))
+			if (!m_cond_cond.wait(m_locker_mutex.get()))
 			{
-				m_mutex.unlock();
+				m_locker_mutex.unlock();
 				return false;
 			}
 		}
-		m_front = (m_front+1) % m_max_size;
-		item = m_array[m_front];
-		m_size--;
-		m_mutex.unlock();
+		m_i_front = (m_i_front+1) % m_i_maxSize;
+		item = m_array[m_i_front];
+		m_i_size--;
+		m_locker_mutex.unlock();
 		return true;
 	}
 
@@ -123,31 +140,31 @@ public:
 		struct timespec t = {0,0};
 		struct timeval now = {0,0};
 		gettimeofday(&now, NULL);
-		m_mutex.lock();
-		while (m_size <= 0)
+		m_locker_mutex.lock();
+		while (m_i_size <= 0)
 		{
 			t.tv_sec = now.tv_sec + ms_timeout / 1000;
 			t.tv_nsec = (ms_timeout % 1000) * 1000;
-			if (!m_cond.timewait(m_mutex.get(), t))
+			if (!m_cond_cond.timewait(m_locker_mutex.get(), t))
 			{
-				m_mutex.unlock();
+				m_locker_mutex.unlock();
 				return false;
 			}
 		}
-		m_front = (m_front+1) % m_max_size;
-		item = m_array[m_front];
-		m_size--;
-		m_mutex.unlock();
+		m_i_front = (m_i_front+1) % m_i_maxSize;
+		item = m_array[m_i_front];
+		m_i_size--;
+		m_locker_mutex.unlock();
 		return true;
 	}
 private:
-	int m_max_size;
+	int m_i_maxSize;
 	T* m_array;
-	int m_size{0};
-	int m_front{-1};
-	int m_back{-1};
-	locker m_mutex;
-	cond m_cond;
+	int m_i_size{0};
+	int m_i_front{-1};
+	int m_i_back{-1};
+	Locker m_locker_mutex;
+	Cond m_cond_cond;
 };
 
-#endif
+#endif /* X_PUBLIC_TOOLS_UTILS_BLOCKQUEUE_H */

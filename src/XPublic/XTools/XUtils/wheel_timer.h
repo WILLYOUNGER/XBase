@@ -1,5 +1,21 @@
-#ifndef TIME_WHEEL_TIMER_H
-#define TIME_WHEEL_TIMER_H
+/**
+*  @file wheel_timer.h
+*  @brief    时间轮
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.0.0
+*  @date     2022/5/2
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/7/2 | 1.0.0.0  | wangxinxiao      | Create file
+*-
+*/
+
+#ifndef X_PUBLIC_TOOLS_UTILS_WHEELTIMER_H
+#define X_PUBLIC_TOOLS_UTILS_WHEELTIMER_H
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -43,4 +59,4 @@ private:
     node_wheel_timer* m_slots[N];
 };
 
-#endif
+#endif /* X_PUBLIC_TOOLS_UTILS_WHEELTIMER_H */

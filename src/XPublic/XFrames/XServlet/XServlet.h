@@ -1,3 +1,19 @@
+/**
+*  @file XServlet.h
+*  @brief    servlet基类
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.0.0
+*  @date     2022/5/4
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/5/4 | 1.0.0.0  | wangxinxiao      | Create file
+*-
+*/
+
 #ifndef X_SERVLET_H
 #define X_SERVLET_H
 
@@ -8,6 +24,10 @@ class XServlet;
 
 typedef XServlet* (*funcPtr)();
 
+/**
+ * @brief Servlet基类
+ * 
+ */
 class XServlet
 {
 public:
@@ -25,6 +45,10 @@ protected:
 	std::string m_path;
 };
 
+/**
+ * @brief Servlet工厂，供用宏生成单例
+ * 
+ */
 class XServletFactory
 {
 public:

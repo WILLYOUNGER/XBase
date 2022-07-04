@@ -1,12 +1,12 @@
-#ifndef X_HTTP_STRUCT_H
-#define X_HTTP_STRUCT_H
+#ifndef X_PUBLIC_STRUCT_HTTPSTRUCT_H
+#define X_PUBLIC_STRUCT_HTTPSTRUCT_H
 
 #include <map>
 #include <list>
 #include <string>
 #include <unistd.h>
 #include <sys/mman.h>
-#include "XStruct.h"
+#include "XNetStruct.h"
 
 namespace XNETSTRUCT {
 
@@ -43,48 +43,48 @@ class XRequest
 public:
 	XRequest()
 	{
-		m_method = NONE;
+		m_method_method = NONE;
 	}
 
 	void setMethod(METHOD method)
 	{
-		m_method = method;
+		m_method_method = method;
 	}
 
-	METHOD getMethod() { return m_method;}
+	METHOD getMethod() { return m_method_method;}
 
-	std::string getAttribute(std::string key) {return m_attribute[key];}
+	std::string getAttribute(std::string key) {return m_mapStrStr_attribute[key];}
 
-	void setAttribute(std::string key, std::string value) {m_attribute.insert(std::pair<std::string, std::string>(key, value));}
+	void setAttribute(std::string key, std::string value) {m_mapStrStr_attribute.insert(std::pair<std::string, std::string>(key, value));}
 
 	void clear()
 	{
-		m_attribute.clear();
-		m_method = NONE;
-		m_path = "/";
-		m_version = "HTTP/1.0";
+		m_mapStrStr_attribute.clear();
+		m_method_method = NONE;
+		m_str_path = "/";
+		m_str_version = "HTTP/1.0";
 	}
 
-	std::string getPath() {return m_path;}
+	std::string getPath() {return m_str_path;}
 
-	void setPath(std::string str) { m_path = str;}
+	void setPath(std::string str) { m_str_path = str;}
 
-	std::string getVersion() {return m_version;}
+	std::string getVersion() {return m_str_version;}
 
-	void setVersion(std::string str) { m_version = str;}
+	void setVersion(std::string str) { m_str_version = str;}
 
 	int getAttributeNum()
 	{
-		return m_attribute.size();
+		return m_mapStrStr_attribute.size();
 	}
 private:
-	METHOD m_method;
+	METHOD m_method_method;
 
-	std::string m_path;
+	std::string m_str_path;
 
-	std::string m_version;
+	std::string m_str_version;
 
-	std::map<std::string, std::string> m_attribute;
+	std::map<std::string, std::string> m_mapStrStr_attribute;
 };
 
 class XResponse
@@ -97,59 +97,59 @@ public:
 
 	~XResponse()
 	{
-		munmap(m_file_address, m_content_length);
-        m_file_address = 0;
+		munmap(m_c_fileAddress_ptr, m_i_contentLength);
+        m_c_fileAddress_ptr = 0;
 	}
 
-	void setHttpCode(HTTP_CODE code) {m_http_code = code;}
+	void setHttpCode(HTTP_CODE code) {m_httpCode_code = code;}
 
-	HTTP_CODE getHttpCode() {return m_http_code;}
+	HTTP_CODE getHttpCode() {return m_httpCode_code;}
 
 	void clear()
 	{
-		m_http_code = NO_RESOURCE;
-		m_isEmpty = true;
-		m_content_length = 0;
+		m_httpCode_code = NO_RESOURCE;
+		m_b_isEmpty = true;
+		m_i_contentLength = 0;
 	}
 
 	void setNotEmpty()
 	{
-		m_isEmpty = false;
+		m_b_isEmpty = false;
 	}
 
 	bool isEmpty()
 	{
-		return m_isEmpty;
+		return m_b_isEmpty;
 	}
 
 	void setFileAddress(char* address)
 	{
-		m_file_address = address;
+		m_c_fileAddress_ptr = address;
 	}
 
 	char* getFileAddress()
 	{
-		return m_file_address;
+		return m_c_fileAddress_ptr;
 	}
 
 	void setContentLength(int length)
 	{
-		m_content_length = length;
+		m_i_contentLength = length;
 	}
 
 	int getContentLength()
 	{
-		return m_content_length;
+		return m_i_contentLength;
 	}
 
 	void setHeadString(std::string _head)
 	{
-		m_head = _head;
+		m_str_head = _head;
 	}
 
 	std::string getHeadString()
 	{
-		return m_head;
+		return m_str_head;
 	}
 
 	void setNeedClose(bool needClose)
@@ -163,20 +163,18 @@ public:
 	}
 
 private:
-	HTTP_CODE m_http_code;
+	HTTP_CODE m_httpCode_code;
 
-	bool m_isEmpty;
+	bool m_b_isEmpty;
 
-	char* m_file_address;
+	char* m_c_fileAddress_ptr;
 
-	int m_content_length;
+	int m_i_contentLength;
 
 	bool m_b_isNeedClose { true };
 
-	std::string m_head;
+	std::string m_str_head;
 };
-
-//static std::map<XSocket, std::list<XResponse>*> m_reply;
 }
 
-#endif
+#endif /* X_PUBLIC_STRUCT_HTTPSTRUCT_H */

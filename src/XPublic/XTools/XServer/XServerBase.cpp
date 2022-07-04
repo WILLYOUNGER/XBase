@@ -10,7 +10,7 @@
 using namespace std;
 using namespace XNETBASE;
 using namespace XNETSTRUCT;
-using namespace XUTILS;
+using namespace XUTILSTOOL;
 
 std::map<XSocket, std::list<XResponse>*> XServerBase::m_reply;
 
@@ -27,20 +27,20 @@ XServerBase::XServerBase(string ip, int port)
 
 void XServerBase::init(string ip, int port)
 {
-    m_server = new XServer(ip.c_str(), port);
+    m_xserver_server = new XServer(ip.c_str(), port);
 	auto connCb = bind(&XServerBase::ConnectCallback,this,std::placeholders::_1);
-    m_server->setConnectionCallback(connCb);
+    m_xserver_server->setConnectionCallback(connCb);
 
     auto closeCb = bind(&XServerBase::CloseCallback, this);
-    m_server->setCloseCallback(closeCb);
+    m_xserver_server->setCloseCallback(closeCb);
 
     auto readCb = bind(&XServerBase::ReadCallback,this,std::placeholders::_1);
-    m_server->setReadCallback(readCb);
+    m_xserver_server->setReadCallback(readCb);
 
     auto writeCb = bind(&XServerBase::WriteCallback, this, std::placeholders::_1, std::placeholders::_2);
-    m_server->setWriteCallback(writeCb);
+    m_xserver_server->setWriteCallback(writeCb);
 
-    m_server->beginListen();
+    m_xserver_server->beginListen();
 }
 
 void XServerBase::ConnectCallback(XSocket socket)

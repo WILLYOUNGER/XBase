@@ -14,8 +14,8 @@
 *-
 */
 
-#ifndef _PUB_UTILS_XMATH_H
-#define _PUB_UTILS_XMATH_H
+#ifndef X_PUBLIC_TOOLS_UTILS_Math_H
+#define X_PUBLIC_TOOLS_UTILS_Math_H
 
 namespace XMATHTOOL {
 
@@ -52,4 +52,4 @@ bool PUB_cutPosByDistanceInt(float x0, float y0, float x1, float y1, float dista
 
 
 
-#endif /* _PUB_UTILS_XMATH_H */
+#endif /* X_PUBLIC_TOOLS_UTILS_Math_H */

@@ -1,10 +1,30 @@
-#ifndef X_HTTP_H
-#define X_HTTP_H
+/**
+*  @file XHttp.h
+*  @brief    HTTP类
+*  Details.
+*
+*  @author   wangxinxiao
+*  @email    wxx1035@163.com
+*  @version  1.0.0.0
+*  @date     2022/5/2
+*
+*  Change History :
+*  <Date>     | <Version> | <Author>       | <Description>
+*  2022/5/2 | 1.0.0.0  | wangxinxiao      | Create file
+*-
+*/
 
-#include "XStruct.h"
+#ifndef X_PUBLIC_TOOLS_HTTP_HTTP_H
+#define X_PUBLIC_TOOLS_HTTP_HTTP_H
+
+#include "XNetStruct.h"
 #include "XHttpStruct.h"
 #include "XServlet.h"
 
+/**
+ * @brief HTTP解析类
+ * 
+ */
 class XHttp
 {
 public:
@@ -92,4 +112,4 @@ private:
 	std::map<std::string, XServlet*> m_servlet;
 };
 
-#endif
+#endif /* X_PUBLIC_TOOLS_HTTP_HTTP_H */

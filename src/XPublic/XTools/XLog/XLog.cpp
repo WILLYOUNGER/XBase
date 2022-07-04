@@ -10,48 +10,48 @@ using namespace std;
 
 XLog::XLog()
 {
-	m_count = 0;
-	m_is_async = false;
-    memset(m_dir_name, '\0', sizeof(m_dir_name));
-    strcpy(m_dir_name, "./log");
+	m_ll_count = 0;
+	m_b_isAsync = false;
+    memset(m_c_dirName_s, '\0', sizeof(m_c_dirName_s));
+    strcpy(m_c_dirName_s, "./log");
 }
 
 XLog::~XLog()
 {
-	if (m_fp != NULL)
+	if (m_file_fp_ptr != NULL)
 	{
-		fclose(m_fp);
+		fclose(m_file_fp_ptr);
 	}
 }
 
-bool XLog::init(const char* file_name, int close_log, int level, int log_buf_size, int split_lines, int max_queue_size)
+bool XLog::init(const char* fileName, int closeLog, int level, int logBufSize, int splitLines, int maxQueueSize)
 {
-    memset(m_file_name, '\0', sizeof(m_file_name));
-    strcpy(m_file_name, file_name);
-    m_close_log = close_log;
-    m_split_lines = split_lines;
-    m_log_buf_sizes = log_buf_size;
-    m_level = level;
-	if (max_queue_size > 0)
+    memset(m_c_fileName_s, '\0', sizeof(m_c_fileName_s));
+    strcpy(m_c_fileName_s, fileName);
+    m_i_closeLog = closeLog;
+    m_i_splitLines = splitLines;
+    m_i_logBufSizes = logBufSize;
+    m_i_level = level;
+	if (maxQueueSize > 0)
 	{
-		m_is_async = true;
-		m_log_queue = new XBlockQueue<XLOGCONTENT>(max_queue_size);
+		m_b_isAsync = true;
+		m_blockQueueXLC_logQueue = new XBlockQueue<XLOGCONTENT>(maxQueueSize);
 		pthread_t pid;
 		pthread_create(&pid, NULL, flush_log_thread, NULL);
 	}
-	m_buf = new char[m_log_buf_sizes];
-	memset(m_buf, '\0', m_log_buf_sizes);
+	m_c_buf_ptr = new char[m_i_logBufSizes];
+	memset(m_c_buf_ptr, '\0', m_i_logBufSizes);
 
 	time_t t = time(NULL);
 	struct tm *sys_tm = localtime(&t);
 	struct tm my_tm = *sys_tm;
 
-    std::string file_full_name = std::string(m_dir_name) + "/" + to_string(my_tm.tm_year + 1900) + "_" + to_string(my_tm.tm_mon + 1) + "_" + to_string(my_tm.tm_mday) + std::string(m_file_name);
+    std::string file_full_name = std::string(m_c_dirName_s) + "/" + to_string(my_tm.tm_year + 1900) + "_" + to_string(my_tm.tm_mon + 1) + "_" + to_string(my_tm.tm_mday) + std::string(m_c_fileName_s);
 
-    int ret = access(m_dir_name, F_OK);
+    int ret = access(m_c_dirName_s, F_OK);
     if (!ret)
     {
-        ret = mkdir(m_dir_name, S_IRWXU);
+        ret = mkdir(m_c_dirName_s, S_IRWXU);
         if (!ret)
         {
             return false;
@@ -60,11 +60,11 @@ bool XLog::init(const char* file_name, int close_log, int level, int log_buf_siz
 
     const char* file_full_name_c = file_full_name.c_str();
 
-	m_today = my_tm.tm_mday;
+	m_i_today = my_tm.tm_mday;
 
-	m_fp = fopen(file_full_name_c, "a");
+	m_file_fp_ptr = fopen(file_full_name_c, "a");
 
-	if (m_fp == NULL)
+	if (m_file_fp_ptr == NULL)
 	{
 		return false;
 	}
@@ -73,7 +73,7 @@ bool XLog::init(const char* file_name, int close_log, int level, int log_buf_siz
 
 void XLog::write_log(int level, string pos, const char *format, ...)
 {
-    if (level < m_level || m_close_log == 0)
+    if (level < m_i_level || m_i_closeLog == 0)
     {
         return;
     }
@@ -107,34 +107,34 @@ void XLog::write_log(int level, string pos, const char *format, ...)
     _logContent_content._str_beginColor = s;
 
     //写入一个log，对m_count++, m_split_lines最大行数
-    m_mutex.lock();
-    m_count++;
+    m_locker_mutex.lock();
+    m_ll_count++;
 
-    if (m_today != my_tm.tm_mday || m_count % m_split_lines == 0) //everyday log
+    if (m_i_today != my_tm.tm_mday || m_ll_count % m_i_splitLines == 0) //everyday log
     {
-        fflush(m_fp);
-        fclose(m_fp);
+        fflush(m_file_fp_ptr);
+        fclose(m_file_fp_ptr);
 
-        if (m_today != my_tm.tm_mday)
+        if (m_i_today != my_tm.tm_mday)
         {
-            std::string file_full_name = string(m_dir_name) + "/" + to_string(my_tm.tm_year + 1900) + "_" + to_string(my_tm.tm_mon + 1) + "_" + to_string(my_tm.tm_mday) + string(m_file_name);
+            std::string file_full_name = string(m_c_dirName_s) + "/" + to_string(my_tm.tm_year + 1900) + "_" + to_string(my_tm.tm_mon + 1) + "_" + to_string(my_tm.tm_mday) + string(m_c_dirName_s);
             const char* file_full_name_c = file_full_name.c_str();
-            m_fp = fopen(file_full_name_c, "a");
+            m_file_fp_ptr = fopen(file_full_name_c, "a");
         }
         else
         {
-            std::string file_full_name = string(m_dir_name) + "/" + to_string(my_tm.tm_year + 1900) + "_" + to_string(my_tm.tm_mon + 1) + "_" + to_string(my_tm.tm_mday) + "_" + to_string(m_count / m_split_lines) + std::string(m_file_name);
+            std::string file_full_name = string(m_c_dirName_s) + "/" + to_string(my_tm.tm_year + 1900) + "_" + to_string(my_tm.tm_mon + 1) + "_" + to_string(my_tm.tm_mday) + "_" + to_string(m_ll_count / m_i_splitLines) + std::string(m_c_fileName_s);
             const char* file_full_name_c = file_full_name.c_str();
-            m_fp = fopen(file_full_name_c, "a");
+            m_file_fp_ptr = fopen(file_full_name_c, "a");
         }
     }
 
-    m_mutex.unlock();
+    m_locker_mutex.unlock();
 
     va_list valst;
     va_start(valst, format);
 
-    m_mutex.lock();
+    m_locker_mutex.lock();
 
     char _c_buffer_ptr[48] = {0};
 
@@ -144,40 +144,40 @@ void XLog::write_log(int level, string pos, const char *format, ...)
                      my_tm.tm_hour, my_tm.tm_min, my_tm.tm_sec, now.tv_usec);
     _logContent_content._str_time = string(_c_buffer_ptr, 0, n);
 
-    int m = vsnprintf(m_buf, m_log_buf_sizes - 1, format, valst);
+    int m = vsnprintf(m_c_buf_ptr, m_i_logBufSizes - 1, format, valst);
     va_end(valst);
-    m_buf[m] = '\n';
-    m_buf[m + 1] = '\0';
-    _logContent_content._str_logContent += string(m_buf, 0, m + 1);
+    m_c_buf_ptr[m] = '\n';
+    m_c_buf_ptr[m + 1] = '\0';
+    _logContent_content._str_logContent += string(m_c_buf_ptr, 0, m + 1);
 
     _logContent_content._str_endColor = "\033[0m";
 
-    m_mutex.unlock();
+    m_locker_mutex.unlock();
 
-    if (m_close_log != 3)
+    if (m_i_closeLog != 3)
     {
-        if (m_is_async && !m_log_queue->full())
+        if (m_b_isAsync && !m_blockQueueXLC_logQueue->full())
         {
-            m_log_queue->push(_logContent_content);
+            m_blockQueueXLC_logQueue->push(_logContent_content);
         }
         else
         {
-            m_mutex.lock();
-			fputs((_logContent_content._str_time + _logContent_content._str_logContent).c_str(), m_fp);
-			m_mutex.unlock();
+            m_locker_mutex.lock();
+			fputs((_logContent_content._str_time + _logContent_content._str_logContent).c_str(), m_file_fp_ptr);
+			m_locker_mutex.unlock();
         }
     }
-    if (m_close_log != 2)
+    if (m_i_closeLog != 2)
     {
-        if (m_is_async && !m_log_queue->full())
+        if (m_b_isAsync && !m_blockQueueXLC_logQueue->full())
         {
         }
         else
         {
-            m_mutex.lock();
+            m_locker_mutex.lock();
             std::string _str_logWithColor = _logContent_content._str_time + _logContent_content._str_beginColor + _logContent_content._str_logContent + _logContent_content._str_endColor;
    			printf("%s", _str_logWithColor.c_str());
-            m_mutex.unlock();
+            m_locker_mutex.unlock();
         }
     }
 
@@ -211,7 +211,7 @@ string XLog::getFileLineFunctionName(const char *format, ...)
 
 void XLog::flush(void)
 {
-	m_mutex.lock();
-	fflush(m_fp);
-	m_mutex.unlock();
+	m_locker_mutex.lock();
+	fflush(m_file_fp_ptr);
+	m_locker_mutex.unlock();
 }
